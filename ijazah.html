@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:site_name" content="IJAZAH • IODININE" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="800" />
+    <meta property="twitter:card" content="summary_large_image" />
+
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+      crossorigin="anonymous"
+    />
+
+    <title>IJAZAH • IODININE</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <style>
+    * {
+      font-family: "Poppins", sans-serif;
+    }
+    ::selection {
+      background-color: white;
+      color: #000;
+      border-radius: 50%;
+    }
+    .form-control:focus,
+    .form-control:active {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .form-control:focus {
+      border-color: #fff;
+      box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+    }
+
+    select.form-select:focus,
+    select.form-select:active {
+      outline: none;
+      box-shadow: none;
+    }
+
+    select.form-select:focus {
+      border-color: #fff;
+      box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+    }
+
+    /* Apply some basic styling to the containing div */
+    .info-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Style for individual paragraphs */
+    #ip-address,
+    #location {
+      margin: 0;
+      padding-right: 10px; /* Add spacing between content and separator */
+    }
+
+    /* Style for the separator */
+    #ip-address::after,
+    #location::after {
+      content: "|";
+      margin-left: 10px; /* Add spacing between separator and content */
+      color: gray;
+    }
+
+    /* Style for the last separator to remove it */
+    #location::after {
+      content: none;
+    }
+
+    .badge {
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    #ip-value {
+      filter: blur(5px); /* Apply initial blur */
+      transition: filter 0.3s ease; /* Add transition effect for smooth change */
+    }
+
+    #ip-value:hover {
+      filter: blur(0); /* Remove blur on hover */
+    }
+
+    /* Style for the separator */
+    #separator {
+      margin: 0 10px; /* Add spacing around the separator */
+      color: gray;
+    }
+
+    /* Style for the last separator to remove it */
+    #badgeBelumMengumpulkan::after {
+      content: none;
+    }
+  </style>
+  <body>
+    <div class="container mt-5">
+      <center>
+        <h5>
+          <img src="logo.png" alt="logo" width="100px" />
+          <br /><br />
+          <u><b>PENGUMPULAN SOFTCOPY IJAZAH SMP</b></u>
+        </h5>
+        <div class="info-container">
+          <p id="ip-address">
+            IP Address: <span id="ip-value">Fetching IP address...</span>
+          </p>
+          <p id="location">Fetching location...</p>
+          <p id="status">Fetching status...</p>
+        </div>
+        <br />
+        <div>
+          <span id="badgeSudahMengumpulkan" class="badge bg-success">0</span>
+          <span id="separator" class="separator">|</span>
+          <span id="badgeBelumMengumpulkan" class="badge bg-danger">0</span>
+        </div>
+
+        <script>
+          const statusElement = document.getElementById("status");
+          const ipValueElement = document.getElementById("ip-value"); // Added this line
+
+          function updateStatus() {
+            if (navigator.onLine) {
+              statusElement.innerHTML =
+                '<span class="badge text-bg-success">ONLINE</span>';
+            } else {
+              statusElement.innerHTML =
+                '<span class="badge text-bg-warning">OFFLINE</span>';
+            }
+          }
+
+          updateStatus();
+
+          window.addEventListener("online", updateStatus);
+          window.addEventListener("offline", updateStatus);
+
+          fetch("https://api.ipify.org/?format=json")
+            .then((response) => response.json())
+            .then((data) => {
+              const ipAddress = data.ip;
+              ipValueElement.textContent = ipAddress; // Updated this line
+
+              // Fetch location data based on IP address
+              fetch(`https://ipapi.co/${ipAddress}/json/`)
+                .then((response) => response.json())
+                .then((locationData) => {
+                  const city = locationData.city;
+                  const region = locationData.region;
+                  const country = locationData.country_code;
+                  document.getElementById(
+                    "location"
+                  ).textContent = `Location: ${city}, ${region}, ${country}`;
+                })
+                .catch((error) => console.error(error));
+            })
+            .catch((error) => console.error(error));
+        </script>
+      </center>
+      <br />
+      <form class="mb-3">
+        <div class="row">
+          <div class="col-md-4">
+            <label for="filterNama" class="form-label">Filter Nama</label>
+            <input type="text" class="form-control" id="filterNama" />
+          </div>
+          <br />
+          <div class="col-md-4">
+            <label for="filterStatus" class="form-label">Filter Status</label>
+            <select class="form-select" id="filterStatus">
+              <option value="">Semua</option>
+              <option value="1">Sudah</option>
+              <option value="2">Belum</option>
+            </select>
+          </div>
+        </div>
+      </form>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th class="col-1">No</th>
+            <th class="col-4">Nama</th>
+            <th class="col-2">No.Induk</th>
+            <th class="col-2">Status</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Data tabel akan ditampilkan di sini -->
+        </tbody>
+      </table>
+    </div>
+    <script>
+      const dataTabel = [
+        {
+          no: 1,
+          nama: "ADRINA ALVALIUVINA",
+          noInduk: "40436",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 2,
+          nama: "ALBERT SANJAYA",
+          noInduk: "40437",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 3,
+          nama: "ANGELICA CAHAYA LAZUARDI",
+          noInduk: "40438",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 4,
+          nama: "ANGELINE",
+          noInduk: "40439",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 5,
+          nama: "AXEL FABIANTO",
+          noInduk: "40440",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 6,
+          nama: "CALVIN HARTONO",
+          noInduk: "40441",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 7,
+          nama: "CARYN WINATA",
+          noInduk: "40442",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 8,
+          nama: "CATHERINE CALISTA",
+          noInduk: "40443",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 9,
+          nama: "CELINE GABRIELLE",
+          noInduk: "40444",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 10,
+          nama: "CHALVIN",
+          noInduk: "40445",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 11,
+          nama: "CHARISSE TERENA CHOO",
+          noInduk: "40446",
+          statusKumpulIjazah: "x",
+        },
+        {
+          no: 12,
+          nama: "CHILWIN",
+          noInduk: "40447",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 13,
+          nama: "CRESTELLA SURYA",
+          noInduk: "40448",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 14,
+          nama: "CRISYE YOUNG",
+          noInduk: "40449",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 15,
+          nama: "DAVID",
+          noInduk: "40450",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 16,
+          nama: "DAVIN RICHEN",
+          noInduk: "40451",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 17,
+          nama: "DHARMA SATRIYA GAUTAMA",
+          noInduk: "40452",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 18,
+          nama: "EARLEANE CALISTA",
+          noInduk: "40453",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 19,
+          nama: "ERIC WINATA",
+          noInduk: "40454",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 20,
+          nama: "EUQENE VELISSA TANNADI",
+          noInduk: "40455",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 21,
+          nama: "EVAN STANLEY",
+          noInduk: "40456",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 22,
+          nama: "FELICE DAVINCCI WILIDYO",
+          noInduk: "40457",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 23,
+          nama: "FILBERT HIDALGO CHANG",
+          noInduk: "40458",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 24,
+          nama: "GRACE CHRYSTIE DAUD",
+          noInduk: "40459",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 25,
+          nama: "HARVANY LIEWIN",
+          noInduk: "40460",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 26,
+          nama: "IRENE MAIA",
+          noInduk: "40461",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 27,
+          nama: "JAEDEN SERAVINO ZHANG",
+          noInduk: "40462",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 28,
+          nama: "JANE FRANSISKA NG",
+          noInduk: "40463",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 29,
+          nama: "JOEL EDGAR TAMBUNAN",
+          noInduk: "40464",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 30,
+          nama: "JONG FILBERT ANTONIUS",
+          noInduk: "40465",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 31,
+          nama: "JOVREDO SEJOLI",
+          noInduk: "40466",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 32,
+          nama: "KHELLY ANGEL",
+          noInduk: "40467",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 33,
+          nama: "MARGARETH JOY FEBRIANTY PAKPAHAN",
+          noInduk: "40468",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 34,
+          nama: "MERVIN NG",
+          noInduk: "40469",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 35,
+          nama: "MORGERTZ SWIEGL LEE",
+          noInduk: "40470",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 36,
+          nama: "NADIA CHARRY ZEN",
+          noInduk: "40471",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 37,
+          nama: "NIKITA FLOREN",
+          noInduk: "40472",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 38,
+          nama: "NOVRICIELLA CARINA LUTHAN",
+          noInduk: "40473",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 39,
+          nama: "NUGROHO HANANTO",
+          noInduk: "40474",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 40,
+          nama: "ORLANDO EDWARD ONGAH",
+          noInduk: "40475",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 41,
+          nama: "RICHARD ANDERSON",
+          noInduk: "40476",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 42,
+          nama: "RITCHIE GUANCHELO",
+          noInduk: "40477",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 43,
+          nama: "SHANA MADELIN",
+          noInduk: "40478",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 44,
+          nama: "SHAWN HUBERT",
+          noInduk: "40479",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 45,
+          nama: "WILBERT YANG JAYA",
+          noInduk: "40480",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 46,
+          nama: "WILSON MASLIE",
+          noInduk: "40481",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 47,
+          nama: "WINNIE WIJAYA",
+          noInduk: "40482",
+          statusKumpulIjazah: "y",
+        },
+        {
+          no: 48,
+          nama: "YOHANES ZEFANYA WILLEM",
+          noInduk: "40483",
+          statusKumpulIjazah: "y",
+        },
+      ];
+
+      const tableBody = document.getElementById("tableBody");
+
+      function renderTable(data) {
+        tableBody.innerHTML = "";
+        data.forEach((item) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+      <td>${item.no}</td>
+      <td>${item.nama}</td>
+      <td>${item.noInduk}</td>
+      <td class="${item.statusKumpulIjazah === "x" ? "highlight-status" : ""}">
+        ${
+          item.statusKumpulIjazah === "y"
+            ? `<span class="badge bg-success">Sudah Mengumpulkan</span>`
+            : `<span class="badge bg-danger">Belum Mengumpulkan</span>`
+        }
+      </td>
+    `;
+          tableBody.appendChild(row);
+        });
+        highlightStatusText();
+      }
+
+      renderTable(dataTabel);
+
+      const filterNama = document.getElementById("filterNama");
+      const filterStatus = document.getElementById("filterStatus");
+
+      function applyFilters() {
+        const filterNamaValue = filterNama.value.toLowerCase();
+        const filterStatusValue = filterStatus.value;
+
+        const filteredData = dataTabel.filter((item) => {
+          return (
+            item.nama.toLowerCase().includes(filterNamaValue) &&
+            (filterStatusValue === "" ||
+              item.statusKumpulIjazah === getStatusValue(filterStatusValue))
+          );
+        });
+
+        renderTable(filteredData);
+        updateBadgeCounts(filteredData);
+      }
+
+      filterNama.addEventListener("input", applyFilters);
+      filterStatus.addEventListener("change", applyFilters);
+
+      function highlightStatusText() {
+        const tdElements = document.querySelectorAll("td");
+        tdElements.forEach((td) => {
+          if (td.classList.contains("highlight-status")) {
+            td.classList.add("highlight-text");
+          } else {
+            td.classList.remove("highlight-text");
+          }
+        });
+      }
+
+      filterStatus.addEventListener("change", function () {
+        if (filterStatus.value === "") {
+          renderTable(dataTabel);
+        }
+      });
+
+      // Map numerical status value to data status value
+      function getStatusValue(filterStatusValue) {
+        const statusValueMap = {
+          1: "y",
+          2: "x",
+        };
+        return statusValueMap[filterStatusValue];
+      }
+
+      // Reset filter status dropdown when filtering by name
+      filterNama.addEventListener("input", () => {
+        filterStatus.value = "";
+        applyFilters();
+      });
+
+      // Function to update badge counts
+      function updateBadgeCounts(data) {
+        const sudahMengumpulkanBadge = document.getElementById(
+          "badgeSudahMengumpulkan"
+        );
+        const belumMengumpulkanBadge = document.getElementById(
+          "badgeBelumMengumpulkan"
+        );
+
+        const sudahMengumpulkanCount = data.filter(
+          (item) => item.statusKumpulIjazah === "y"
+        ).length;
+        const belumMengumpulkanCount = data.filter(
+          (item) => item.statusKumpulIjazah !== "y"
+        ).length;
+
+        sudahMengumpulkanBadge.textContent = sudahMengumpulkanCount;
+        belumMengumpulkanBadge.textContent = belumMengumpulkanCount;
+      }
+
+      // Initial rendering of table and badge counts
+      renderTable(dataTabel);
+      updateBadgeCounts(dataTabel);
+
+      // Copy event listener
+      document.addEventListener("copy", function (e) {
+        e.preventDefault();
+        alert("ekhem ngapain copy?");
+      });
+    </script>
+  </body>
+</html>
